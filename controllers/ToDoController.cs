@@ -136,6 +136,7 @@ namespace CrudApi.Controllers
 
             return NoContent();
         }
+
         // POST: api/Todos
         [HttpPost]
         public async Task<ActionResult<Todo>> PostTodo(TodoInputModel model)
@@ -189,6 +190,90 @@ namespace CrudApi.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        // GET: api/Todos/search
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<object>>> SearchTodos(DateTime? fromDate, int? userId)
+        {
+            IQueryable<Todo> query = _context.ToDos.Include(t => t.User);
+
+            if (fromDate.HasValue)
+            {
+                query = query.Where(t => t.CreatedDate.Date == fromDate.Value.Date);
+            }
+
+            if (userId.HasValue)
+            {
+                query = query.Where(t => t.UserId == userId);
+            }
+
+            var todos = await query.ToListAsync();
+
+            var todosDto = todos.Select(t => new
+            {
+                t.Id,
+                t.Name,
+                t.Description,
+                t.IsCompleted,
+                t.Status,
+                t.UserId,
+                t.CreatedDate,
+                User = new
+                {
+                    t.User.Id,
+                    t.User.Username,
+                    t.User.FullName,
+                    t.User.Address,
+                    t.User.Phone,
+                    t.User.Email
+                }
+            });
+
+            return Ok(todosDto);
+        }
+
+        [HttpGet("sortBy")]
+        public async Task<ActionResult<IEnumerable<object>>> GetTodos(string sortBy)
+        {
+            IQueryable<Todo> query = _context.ToDos.Include(t => t.User);
+
+            switch (sortBy)
+            {
+                case "date":
+                    query = query.OrderBy(t => t.CreatedDate);
+                    break;
+                case "user":
+                    query = query.OrderBy(t => t.User.Username);
+                    break;
+                default:
+                    query = query.OrderBy(t => t.CreatedDate);
+                    break;
+            }
+
+            var todos = await query.ToListAsync();
+
+            var todosDto = todos.Select(t => new
+            {
+                t.Id,
+                t.Name,
+                t.Description,
+                t.IsCompleted,
+                t.Status,
+                t.UserId,
+                t.CreatedDate,
+                User = new
+                {
+                    t.User.Id,
+                    t.User.Username,
+                    t.User.FullName,
+                    t.User.Address,
+                    t.User.Phone,
+                    t.User.Email
+                }
+            });
+
+            return Ok(todosDto);
         }
 
         private bool TodoExists(int id)

@@ -150,3 +150,4 @@ D:\VTC\be\be\CrudApi\bin\Debug\net8.0\SshNet.Security.Cryptography.dll
 D:\VTC\be\be\CrudApi\bin\Debug\net8.0\System.Xml.XPath.XmlDocument.dll
 D:\VTC\be\be\CrudApi\bin\Debug\net8.0\MySqlConnector.dll
 D:\VTC\be\be\CrudApi\bin\Debug\net8.0\Pomelo.EntityFrameworkCore.MySql.dll
+D:\VTC\be\be\CrudApi\obj\Debug\net8.0\CrudApi.sourcelink.json
